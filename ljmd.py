@@ -1,5 +1,11 @@
 import mdsys_struct as md
 import time
+import sys
+
+LP_c_char = ctypes.POINTER(ctypes.c_char)
+LP_LP_c_char = ctypes.POINTER(LP_c_char)
+
+
 
 #calling the system variable "sys" would be confusing as "sys" is a rather standart module, so we call it psys
 psys=md.mdsys()

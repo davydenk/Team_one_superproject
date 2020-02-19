@@ -28,14 +28,17 @@ class mdsys(ct.Structure):
     self.ekin_func = wrap_function(c_ljmd, 'ekin', None, [ct.POINTER(mdsys)])
     self.vel1_func = wrap_function(c_ljmd, 'vel_step1', None, [ct.POINTER(mdsys)])
     self.vel2_func = wrap_function(c_ljmd, 'vel_step2', None, [ct.POINTER(mdsys)])
-    self.initial_func = wrap_function(c_ljmd, 'initialize_mpi', None, [ct.POINTER(mdsys)])
+    self.initial_func = wrap_function(c_ljmd, 'initialize_mpi', None, [ct.POINTER(mdsys),ctypes.c_int, LP_LP_c_char])
     self.finalize = wrap_function(c_ljmd, 'finalize_mpi', None, None)
     self.broadcast_vals_func = wrap_function(c_ljmd, 'broadcast_values', None, [ct.POINTER(mdsys)])
     self.broadcast_arrs_func = wrap_function(c_ljmd, 'broadcast_arrays', None, [ct.POINTER(mdsys)])
     self.extra_alloc_func = wrap_function(c_ljmd, 'allocate_cs', None, [ct.POINTER(mdsys)])
     self.extra_free_func = wrap_function(c_ljmd, 'free_cs', None, [ct.POINTER(mdsys)])
- #   self.md_loop_func = wrap_function(c_mdloop, 'md_loop', None, [ct.POINTER(mdsys)])
-    
+    self.argc=len(sys.argv) 
+    for i, arg in enumerate(sys.argv): 
+      enc_arg = arg.encode('utf-8') 
+      self.argv[i] = ctypes.create_string_buffer(enc_arg) 
+      
   def force(self):
     self.force_func(self)
 
