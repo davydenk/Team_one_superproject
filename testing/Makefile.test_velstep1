@@ -1,0 +1,29 @@
+# -*- Makefile -*-
+IPATH=../include
+SPATH=../src
+OBJS = test_velstep1.o $(SPATH)/velocity_step1.o
+EXE = test_velstep1.x
+CC = gcc
+CFLAGS = -I $(IPATH) -Wall -Wextra -ffast-math -fomit-frame-pointer -O3
+LDLIBS=-lm
+HEADERS = $(wildcard $(IPATH)/*.h)
+
+default: $(EXE)
+
+.PHONY: default
+
+$(EXE): $(OBJS)
+	$(CC) $^ -o $@
+
+%.o: %.c $(HEADERS)
+	$(CC) -c $(CFLAGS) $(LDLIBS) $< -o $@
+	
+	
+test_velstep1.o: $(IPATH)/md_struct.h $(IPATH)/velocity_step1.h $(IPATH)/constants.h
+
+velocity_step1.c.o: $(IPATH)/md_struct.h $(IPATH)/constants.h
+
+clean:
+	rm -f $(OBJS) $(EXE)
+
+.PHONY: clean
