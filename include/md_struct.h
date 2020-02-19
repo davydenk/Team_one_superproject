@@ -5,10 +5,6 @@
 #endif //USE_MPI
 #include "constants.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif //_OPENMP
-
 /* structure to hold the complete information
  * about the MD system */
 struct _mdsys {

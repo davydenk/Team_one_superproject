@@ -147,6 +147,5 @@ int main()
     free(sys.vy);
     free(sys.vz);
 
-return 0;
-
+    return 0;
 }
