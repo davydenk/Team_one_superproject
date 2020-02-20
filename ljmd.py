@@ -1,17 +1,15 @@
 import mdsys_struct as md
+import mpi_init_finalize as mp
 import time
 import sys
 
-LP_c_char = ctypes.POINTER(ctypes.c_char)
-LP_LP_c_char = ctypes.POINTER(LP_c_char)
-
-
+#does nothing if not compiled with mpi flag
+mp.mpi_start()
 
 #calling the system variable "sys" would be confusing as "sys" is a rather standart module, so we call it psys
 psys=md.mdsys()
 
-#initialize MPI if defined and get rank, rank zero if MPI not defined
-psys.initial()
+psys.get_rank_nps()
 
 psys.read_input()
 
@@ -63,5 +61,4 @@ if psys.rank==0:
 psys.extra_free()
 
 
-#finalizes mpi if needed  
-psys.finalize()  
+mp.mpi_end()
