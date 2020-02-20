@@ -28,7 +28,7 @@
 #endif //USE_MPI
 
 /* main */
-int main()
+int main(int argc, char **argv)
 {
     int nprint, i;
     char restfile[BLEN], trajfile[BLEN], ergfile[BLEN];
@@ -37,9 +37,13 @@ int main()
     mdsys_t sys;
 
     //Initialize MPI
-    initialize_mpi( &sys );
+   
+#ifdef USE_MPI    
+    MPI_Init(&argc,&argv);
+#endif    
+    get_rank_nps(&sys);
 
-    //READING DATA and if MPI is definite Broadcast
+    //READING DATA
     if (sys.rank==0){
     read_input(&sys, restfile, trajfile, ergfile, &nprint);}
     
@@ -136,7 +140,7 @@ int main()
     /* clean up: close files, free memory */
     if ( sys.rank == 0 ) {
     printf("Simulation Done.\n");
-    printf("Time to solution : %f\n", sys.t_elapsed_slow);
+  //  printf("Time to solution : %f\n", sys.t_elapsed_slow);
     fclose(erg);
     fclose(traj);
     }
@@ -155,10 +159,10 @@ int main()
     free( sys.cx );
     free( sys.cy );
     free( sys.cz );
+    MPI_Finalize();
     #endif //USE_MPI
 
 
-    finalize_mpi(&sys);
-
+   
     return 0;
 }

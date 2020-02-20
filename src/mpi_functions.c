@@ -5,22 +5,6 @@
 #endif //USE_MPI
 #include "stdlib.h"
 
-void initialize_mpi ( mdsys_t * sys ) {
-
-#ifdef USE_MPI
-//  int * argc_fake;
- // char *** argv_fake;
-  MPI_Init(NULL,NULL);
-  MPI_Comm_size( MPI_COMM_WORLD, &sys->nps );
-  MPI_Comm_rank( MPI_COMM_WORLD, &sys->rank );
-#else
-  sys->rank = 0;
-  sys->nps = 1;
-#endif //USE_MPI
-
-  return;
-
-}
 
 void allocate_cs ( mdsys_t * sys ) {
 #ifdef USE_MPI
@@ -39,12 +23,15 @@ void free_cs ( mdsys_t * sys ) {
 #endif
 }
 
-void finalize_mpi () {
-  
+void get_rank_nps(mdsys_t * sys) {
 #ifdef USE_MPI
-  MPI_Finalize();
-#endif //USE_MPI
-
-  return;  
-
+  int nps,rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &sys->rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &sys->nps);
+#else
+  sys->rank=0;
+  sys->nps=1;
+#endif  
 }
+
+

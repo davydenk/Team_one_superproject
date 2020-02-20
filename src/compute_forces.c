@@ -29,8 +29,8 @@ void force(mdsys_t *sys)
     double rx,ry,rz;
     double rcsq =  sys->rcut * sys->rcut;
     int i,j;
-    sys-> t_elapsed = 0;
-    sys-> t_elapsed_slow = 0;
+ //   sys-> t_elapsed = 0;
+ //   sys-> t_elapsed_slow = 0;
 
 #ifdef USE_MPI
     /* communicate to all the processes previous step update of positions */
@@ -91,14 +91,14 @@ void force(mdsys_t *sys)
                 rz *= ffac;
 
 #ifdef USE_MPI
-                sys->t_elapsed_start = timer_seconds();
+            //    sys->t_elapsed_start = timer_seconds();
                 sys->cx[i] += rx;
                 sys->cy[i] += ry;
                 sys->cz[i] += rz;
                 sys->cx[j] -= rx;
                 sys->cy[j] -= ry;
                 sys->cz[j] -= rz;
-                sys->t_elapsed += timer_seconds() - sys->t_elapsed_start;
+            //    sys->t_elapsed += timer_seconds() - sys->t_elapsed_start;
            }
         }
   		
@@ -132,7 +132,7 @@ void force(mdsys_t *sys)
     MPI_Reduce( sys->cy, sys->fy, sys->natoms, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD );
     MPI_Reduce( sys->cz, sys->fz, sys->natoms, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD );
     MPI_Reduce( &epot, &sys->epot, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD );
-    MPI_Reduce( &sys->t_elapsed, &sys->t_elapsed_slow, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD );
+//    MPI_Reduce( &sys->t_elapsed, &sys->t_elapsed_slow, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD );
     
 #else
     sys->epot=epot;

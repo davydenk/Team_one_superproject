@@ -2,7 +2,7 @@ import ctypes as ct
 import sys
 
 so_ljmd = "../lib/ljmd.so"
-c_ljmd = ct.CDLL(so_ljmd)
+c_ljmd = ct.CDLL(so_ljmd,ct.RTLD_GLOBAL)
 
 def wrap_function(lib, funcname, restype, argtypes):
     """Simplify wrapping ctypes functions"""
@@ -28,13 +28,11 @@ class mdsys(ct.Structure):
     self.ekin_func = wrap_function(c_ljmd, 'ekin', None, [ct.POINTER(mdsys)])
     self.vel1_func = wrap_function(c_ljmd, 'vel_step1', None, [ct.POINTER(mdsys)])
     self.vel2_func = wrap_function(c_ljmd, 'vel_step2', None, [ct.POINTER(mdsys)])
-    self.initial_func = wrap_function(c_ljmd, 'initialize_mpi', None, [ct.POINTER(mdsys)])
-    self.finalize = wrap_function(c_ljmd, 'finalize_mpi', None, None)
     self.broadcast_vals_func = wrap_function(c_ljmd, 'broadcast_values', None, [ct.POINTER(mdsys)])
     self.broadcast_arrs_func = wrap_function(c_ljmd, 'broadcast_arrays', None, [ct.POINTER(mdsys)])
     self.extra_alloc_func = wrap_function(c_ljmd, 'allocate_cs', None, [ct.POINTER(mdsys)])
     self.extra_free_func = wrap_function(c_ljmd, 'free_cs', None, [ct.POINTER(mdsys)])
- #   self.md_loop_func = wrap_function(c_mdloop, 'md_loop', None, [ct.POINTER(mdsys)])
+    self.get_rank_nps_func = wrap_function(c_ljmd, 'get_rank_nps', None, [ct.POINTER(mdsys)])
     
   def force(self):
     self.force_func(self)
@@ -49,11 +47,8 @@ class mdsys(ct.Structure):
   def vel2(self):
     self.vel2_func(self)
     
-  def finalize(self):
-    self.finalize_func(self)
-    
-  def initial(self):
-    self.initial_func(self)
+  def get_rank_nps(self):
+    self.get_rank_nps_func(self)
 
   def broadcast_arrs(self):
     self.broadcast_arrs_func(self)

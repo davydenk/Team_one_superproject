@@ -2,6 +2,7 @@
 IPATH=../include
 OPATH=../Objects
 SOPATH=../lib
+EXTRA_path=./extra
 SRCS = $(wildcard *.c)
 OBJS_ex = $(SRCS:%.c=$(OPATH)/%.n.o)
 OBJS_so = $(SRCS:%.c=$(OPATH)/%.so.o)
@@ -14,6 +15,7 @@ OBJS_mpi_opn_so = $(SRCS:%.c=$(OPATH)/%.mpi.opn.so.o)
 HEADERS = $(wildcard $(IPATH)/*.h)
 EXE = ../ljmd.x
 LIB= $(SOPATH)/ljmd.so
+LIB_mpi=$(SOPATH)/mpi_init_finalize.so
 CC = gcc
 
 CFLAGS = -I $(IPATH) -Wall -Wextra -ffast-math -fomit-frame-pointer -O3  -std=c99
@@ -35,14 +37,14 @@ $(OPATH)/%.n.o: %.c $(HEADERS)
 	
 shared: $(OBJS_so) 
 	$(CC) $^ -o $(LIB) $(LDFLAGS) -shared -fPIC -flto
-
+	$(CC) $(OPATH)/mpi_init_finalize.so.o -o $(LIB_mpi) $(LDFLAGS) -shared -fPIC -flto
 
 $(OPATH)/%.so.o: %.c $(HEADERS)
-	$(CC) -c $(CFLAGS) -fPIC -flto  $< -o $@
-
+	$(CC) -c $(CFLAGS) -fPIC -flto $< -o $@
+		
 .PHONY: shared
 
-mpi: $(OBJS_mpi) $(HEADERS)
+mpi: $(OBJS_mpi)
 	$(MPIC) $^ -o $(EXE) $(LDFLAGS) -DUSE_MPI #-L/opt/openmpi/4.0.1/lib
 
 $(OPATH)/%.mpi.o: %.c $(HEADERS)
@@ -67,7 +69,8 @@ $(OPATH)/%.mpi.opn.o: %.c $(HEADERS)
 	
 
 shared_mpi: $(OBJS_mpi_so) 
-	$(MPIC) $^ -o $(LIB) $(LDFLAGS) -shared -fPIC -flto 
+	$(MPIC) $^ -o $(LIB) $(LDFLAGS) -shared -fPIC -flto
+	$(MPIC) $(OPATH)/mpi_init_finalize.mpi.so.o -o $(LIB_mpi) $(LDFLAGS) -shared -fPIC -flto
 
 $(OPATH)/%.mpi.so.o: %.c $(HEADERS)
 	$(MPIC) -c $(CFLAGS) -fPIC -flto -DUSE_MPI $< -o $@
@@ -76,6 +79,7 @@ $(OPATH)/%.mpi.so.o: %.c $(HEADERS)
 
 shared_openmp: $(OBJS_opn_so)
 	$(CC) $^ -o $(LIB) $(LDFLAGS) -shared -fPIC -flto -fopenmp
+	$(CC) $(OPATH)/mpi_init_finalize.opn.so.o -o $(LIB_mpi) $(LDFLAGS) -shared -fPIC -flto -fopenmp
 
 $(OPATH)/%.opn.so.o: %.c $(HEADERS)
 	$(CC) -c $(CFLAGS) -fPIC -flto  $(OMPFLAGS) $< -o $@
@@ -84,6 +88,7 @@ $(OPATH)/%.opn.so.o: %.c $(HEADERS)
 	
 shared_mpi_openmp: $(OBJS_mpi_opn_so)
 	$(MPIC) $^ -o $(LIB) $(LDFLAGS) -shared -fPIC -flto -fopenmp
+	$(MPIC) $(OPATH)/mpi_init_finalize.mpi.opn.so.o -o $(LIB_mpi) $(LDFLAGS) -shared -fPIC -flto -fopenmp
 
 $(OPATH)/%.mpi.opn.so.o: %.c $(HEADERS)
 	$(MPIC) -c $(CFLAGS) -fPIC -flto $(OMPFLAGS) -DUSE_MPI $< -o $@

@@ -3,7 +3,9 @@
 #ifndef MPI_FUNCTIONS_H
 #define MPI_FUNCTIONS_H
 
-void initialize_mpi( mdsys_t * sys );
-void finalize_mpi();
+void get_rank_nps(mdsys_t * sys);
+void free_cs ( mdsys_t * sys );
+void allocate_cs ( mdsys_t * sys );
+
 
 #endif
