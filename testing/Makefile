@@ -1,7 +1,7 @@
 
 deafult: all_py
 
-all_c: test_input_c test_kinetic_c test_force_c test_velstep1.c
+all_c: test_input_c test_kinetic_c test_force_c test_velstep1_c
 
 all_py: 
 	cd .. && make clean
@@ -9,7 +9,6 @@ all_py:
 	python3 test_input.py < argon_108.inp	
 	python3 test_force.py
 	python3 test_kinetic.py
-	python3 test_velstep1.py
 
 test_input_c: 
 	make -f Makefile.test_input
@@ -41,11 +40,6 @@ test_kinetic:
 	cd .. && make clean
 	cd .. && make shared
 	python3 test_kinetic.py
-
-test_velstep1:
-	cd .. && make clean
-	cd .. && make shared
-	python3 test_velstep1.py
 	
 clean: 
-	rm -rf *.o *.x *.so
+	rm -rf *.o *.x *.so *.dat *.xyz
